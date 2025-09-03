@@ -17,6 +17,7 @@ WOODPICKER_API_KEY = os.getenv("WOODPICKER_API_KEY")
 if not TELEGRAM_TOKEN or not WOODPICKER_API_KEY:
     raise SystemExit("TELEGRAM_TOKEN и WOODPICKER_API_KEY должны быть установлены в переменных окружения")
 
+# Хранилище имен пользователей
 users = {}
 
 # Команды
@@ -70,14 +71,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"WoodPicker API error: {e}")
         await update.message.reply_text("Упс, что-то пошло не так 😅 Попробуй через минуту.")
 
-# Запуск бота
+# Запуск бота (Background Worker)
 def main():
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("setname", set_name))
     app.add_handler(CommandHandler("cancel", cancel))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    print("Bot is running...")
+    print("Bot is running as Background Worker...")
     app.run_polling()
 
 if __name__ == "__main__":
